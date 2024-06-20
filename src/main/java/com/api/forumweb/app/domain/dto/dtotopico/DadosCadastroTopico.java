@@ -1,4 +1,4 @@
-package com.api.forumweb.app.domain.dto;
+package com.api.forumweb.app.domain.dto.dtotopico;
 
 import java.time.LocalDateTime;
 

@@ -1,10 +1,12 @@
 package com.api.forumweb.app.infra.exception;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.api.forumweb.app.domain.validation.ValidacaoException;
 
@@ -20,10 +22,14 @@ public class TratadorDeErros {
         return ResponseEntity.notFound().build();
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<String> tratarErroDeArgumento(MethodArgumentTypeMismatchException ex){
+        return ResponseEntity.badRequest().body("Argumento incorreto: " + ex);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> tratarErro400(HttpMessageNotReadableException ex){
         return ResponseEntity.badRequest().body(ex.getMessage());
-    
     }
 
     @ExceptionHandler(ValidacaoException.class)

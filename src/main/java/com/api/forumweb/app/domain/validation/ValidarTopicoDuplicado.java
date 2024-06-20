@@ -3,7 +3,7 @@ package com.api.forumweb.app.domain.validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.api.forumweb.app.domain.dto.DadosCadastroTopico;
+import com.api.forumweb.app.domain.dto.dtotopico.DadosCadastroTopico;
 import com.api.forumweb.app.domain.repository.TopicoRepository;
 
 @Component

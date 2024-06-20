@@ -2,7 +2,7 @@ package com.api.forumweb.app.domain.model;
 
 import java.time.LocalDateTime;
 
-import com.api.forumweb.app.domain.dto.DadosCadastroTopico;
+import com.api.forumweb.app.domain.dto.dtotopico.DadosCadastroTopico;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
