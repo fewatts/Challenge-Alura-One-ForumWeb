@@ -2,6 +2,7 @@ package com.api.forumweb.app.domain.dto.dtotopico;
 
 import java.time.LocalDateTime;
 
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -13,8 +14,11 @@ public record DadosCadastroTopico(
         
         LocalDateTime dataCriacao,
         
-        @NotNull Boolean status
+        @NotNull Boolean status,
+
+        @NotNull Long idCurso
 
     ) {
+
 
 }

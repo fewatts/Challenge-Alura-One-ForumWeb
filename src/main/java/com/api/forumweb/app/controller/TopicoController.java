@@ -1,5 +1,6 @@
 package com.api.forumweb.app.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,9 @@ import com.api.forumweb.app.domain.dto.dtotopico.DadosCadastroTopico;
 import com.api.forumweb.app.domain.dto.dtotopico.DadosDetalhamentoTopico;
 import com.api.forumweb.app.domain.dto.dtotopico.DadosListagemTopico;
 import com.api.forumweb.app.domain.model.Topico;
+import com.api.forumweb.app.domain.repository.CursoRepository;
 import com.api.forumweb.app.domain.repository.TopicoRepository;
-import com.api.forumweb.app.domain.validation.ValidarTopicoDuplicado;
+import com.api.forumweb.app.domain.validation.validadorestopico.ValidadorPostagemTopico;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -37,7 +39,10 @@ public class TopicoController {
     private TopicoRepository topicoRepository;
 
     @Autowired
-    private ValidarTopicoDuplicado validarTD;
+    private CursoRepository cursoRepository;
+
+    @Autowired
+    private List<ValidadorPostagemTopico> validadoresTopico;
 
     @GetMapping
     public ResponseEntity<Page<DadosListagemTopico>> listarTopicos(
@@ -54,15 +59,16 @@ public class TopicoController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Topico> cadastrarTopico(@RequestBody @Valid DadosCadastroTopico dados,
+    public ResponseEntity<DadosDetalhamentoTopico> cadastrarTopico(@RequestBody @Valid DadosCadastroTopico dados,
             UriComponentsBuilder uriBuilder) {
-        validarTD.validar(dados);
+        validadoresTopico.forEach(v -> v.validar(dados));
         var topico = new Topico(dados);
+        topico.setCurso(cursoRepository.getReferenceById(dados.idCurso()));
         topicoRepository.save(topico);
 
-        var uri = uriBuilder.path("/topico/{id}").buildAndExpand(topico.getId()).toUri();
+        var uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(topico);
+        return ResponseEntity.created(uri).body(new DadosDetalhamentoTopico(topico));
     }
 
     @PutMapping("/{id}")
@@ -70,7 +76,6 @@ public class TopicoController {
     public ResponseEntity<DadosDetalhamentoTopico> atualizarTopico(@PathVariable Long id, @RequestBody @Valid DadosCadastroTopico dados){
         Optional<Topico> topico = topicoRepository.findById(id);
         if(topico.isPresent()){
-            validarTD.validar(dados);
             topico.get().atualizar(dados);
         }
         return ResponseEntity.ok().body(new DadosDetalhamentoTopico(topico.get()));

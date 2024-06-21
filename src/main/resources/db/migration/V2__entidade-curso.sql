@@ -1,0 +1,13 @@
+CREATE TABLE cursos(
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    categoria VARCHAR(100) NOT NULL,
+    PRIMARY KEY(id)
+);
+
+ALTER TABLE topicos ADD COLUMN id_curso BIGINT NOT NULL;
+
+ALTER TABLE topicos
+ADD CONSTRAINT fk_curso
+FOREIGN KEY (id_curso)
+REFERENCES cursos(id);

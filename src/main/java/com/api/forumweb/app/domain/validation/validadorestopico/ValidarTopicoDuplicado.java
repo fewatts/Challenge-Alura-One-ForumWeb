@@ -1,13 +1,14 @@
-package com.api.forumweb.app.domain.validation;
+package com.api.forumweb.app.domain.validation.validadorestopico;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.api.forumweb.app.domain.dto.dtotopico.DadosCadastroTopico;
 import com.api.forumweb.app.domain.repository.TopicoRepository;
+import com.api.forumweb.app.domain.validation.ValidacaoException;
 
 @Component
-public class ValidarTopicoDuplicado implements ValidarPostagemTopico{
+public class ValidarTopicoDuplicado implements ValidadorPostagemTopico{
 
     @Autowired
     private TopicoRepository topicoRepository;

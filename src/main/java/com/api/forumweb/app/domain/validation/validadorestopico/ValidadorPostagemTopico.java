@@ -1,9 +1,9 @@
-package com.api.forumweb.app.domain.validation;
+package com.api.forumweb.app.domain.validation.validadorestopico;
 
 import com.api.forumweb.app.domain.dto.dtotopico.DadosCadastroTopico;
 
-public interface ValidarPostagemTopico {
-    
+public interface ValidadorPostagemTopico {
+
     void validar(DadosCadastroTopico dados);
 
 }
