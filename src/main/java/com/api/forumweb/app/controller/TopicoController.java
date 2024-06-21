@@ -1,14 +1,19 @@
 package com.api.forumweb.app.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,7 +54,7 @@ public class TopicoController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Topico> cadastrar(@RequestBody @Valid DadosCadastroTopico dados,
+    public ResponseEntity<Topico> cadastrarTopico(@RequestBody @Valid DadosCadastroTopico dados,
             UriComponentsBuilder uriBuilder) {
         validarTD.validar(dados);
         var topico = new Topico(dados);
@@ -58,6 +63,28 @@ public class TopicoController {
         var uri = uriBuilder.path("/topico/{id}").buildAndExpand(topico.getId()).toUri();
 
         return ResponseEntity.created(uri).body(topico);
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<DadosDetalhamentoTopico> atualizarTopico(@PathVariable Long id, @RequestBody @Valid DadosCadastroTopico dados){
+        Optional<Topico> topico = topicoRepository.findById(id);
+        if(topico.isPresent()){
+            validarTD.validar(dados);
+            topico.get().atualizar(dados);
+        }
+        return ResponseEntity.ok().body(new DadosDetalhamentoTopico(topico.get()));
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<HttpStatus> deletarTopico(@PathVariable Long id){
+        Optional<Topico> topico = topicoRepository.findById(id);
+        if(topico.isPresent()){
+            topicoRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
 }

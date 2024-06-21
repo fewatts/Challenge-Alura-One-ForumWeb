@@ -13,7 +13,7 @@ public record DadosCadastroTopico(
         
         LocalDateTime dataCriacao,
         
-        @NotNull boolean status
+        @NotNull Boolean status
 
     ) {
 

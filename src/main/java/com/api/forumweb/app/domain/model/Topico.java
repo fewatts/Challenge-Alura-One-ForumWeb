@@ -36,13 +36,26 @@ public class Topico {
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;
 
-    private boolean status;
+    private Boolean status;
 
     public Topico(DadosCadastroTopico dados) {
         this.titulo = dados.titulo();
         this.mensagem = dados.mensagem();
         this.dataCriacao = LocalDateTime.now();
         this.status = dados.status();
+    }
+
+    public void atualizar(DadosCadastroTopico dados) {
+        if(dados.titulo() != null){
+            this.titulo = dados.titulo();
+        }
+        if(dados.mensagem() != null){
+            this.mensagem = dados.mensagem();
+        }
+        if(dados.status() != null){
+            this.status = dados.status();
+        }
+        this.dataCriacao = LocalDateTime.now();
     }
 
 }

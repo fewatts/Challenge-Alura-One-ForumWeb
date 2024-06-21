@@ -13,7 +13,7 @@ public class ValidarTopicoDuplicado implements ValidarPostagemTopico{
     private TopicoRepository topicoRepository;
 
     public void validar(DadosCadastroTopico dados) {
-        if(topicoRepository.existsByTituloIgnoreCase(dados.titulo()) || topicoRepository.existsByMensagemIgnoreCase(dados.mensagem())){
+        if(topicoRepository.existsByTituloIgnoreCase(dados.titulo()) && topicoRepository.existsByMensagemIgnoreCase(dados.mensagem())){
             throw new ValidacaoException("O tópico de titulo '" + dados.titulo() + "' com mensagem '" + dados.mensagem() + "' já existe.");
         }
     }
