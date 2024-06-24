@@ -2,6 +2,8 @@ package com.api.forumweb.app.domain.model;
 
 import java.time.LocalDateTime;
 
+import com.api.forumweb.app.domain.dto.dtoresposta.DadosCadastroRespostas;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,6 +28,7 @@ public class Resposta {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String mensagem;
 
@@ -37,5 +40,20 @@ public class Resposta {
     private LocalDateTime dataCriacao;
 
     private String solucao;
+
+    public Resposta(DadosCadastroRespostas dados){
+        this.mensagem = dados.mensagem();
+        this.dataCriacao = LocalDateTime.now();
+        this.solucao = dados.solucao();
+    }
+
+    public void atualizar(DadosCadastroRespostas dados) {
+        if(dados.mensagem() != null){
+            this.mensagem = dados.mensagem();
+        }
+        if(dados.solucao() != null){
+            this.solucao = dados.solucao();
+        }
+    }
     
 }

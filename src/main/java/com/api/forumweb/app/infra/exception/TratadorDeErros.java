@@ -1,6 +1,7 @@
 package com.api.forumweb.app.infra.exception;
 
 
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,11 @@ public class TratadorDeErros {
     public ResponseEntity<Stream<Object>> tratarErro400(MethodArgumentNotValidException ex){
         var erros = ex.getFieldErrors();
         return ResponseEntity.badRequest().body(erros.stream().map(DadosErroValidacao::new));
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<HttpStatus> tratarErroElementoNaoEncontrado(NoSuchElementException ex){
+        return ResponseEntity.notFound().build();
     }
 
 }
