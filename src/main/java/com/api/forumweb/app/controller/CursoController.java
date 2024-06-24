@@ -25,6 +25,7 @@ import com.api.forumweb.app.domain.model.Curso;
 import com.api.forumweb.app.domain.repository.CursoRepository;
 // import com.api.forumweb.app.domain.repository.TopicoRepository;
 import com.api.forumweb.app.domain.validation.validadorcurso.ValidarCursoDuplicado;
+import com.api.forumweb.app.domain.validation.validadorcurso.ValidarExistenciaDeTopicoComCurso;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -36,12 +37,11 @@ public class CursoController {
     @Autowired
     private CursoRepository cursoRepository;
 
-    // Apenas excluir cursos que não possuam topicos
-    // @Autowired
-    // private TopicoRepository topicoRepository;
+    @Autowired
+    private ValidarExistenciaDeTopicoComCurso validarExistenciaDeTopicoComCurso;
 
     @Autowired
-    private ValidarCursoDuplicado validarCD;
+    private ValidarCursoDuplicado validarCursoDuplicado;
 
     @GetMapping
     public ResponseEntity<Page<DadosDetalhamentoCurso>> listarCursos(
@@ -60,7 +60,7 @@ public class CursoController {
     @Transactional
     public ResponseEntity<DadosDetalhamentoCurso> cadastrarCurso(@RequestBody @Valid DadosCadastroCurso dados,
             UriComponentsBuilder uriBuilder) {
-        validarCD.validar(dados);
+        validarCursoDuplicado.validar(dados);
         var curso = new Curso(dados);
         cursoRepository.save(curso);
 
@@ -84,10 +84,11 @@ public class CursoController {
     @Transactional
     public ResponseEntity<HttpStatus> deletarCurso(@PathVariable Long id) {
         Optional<Curso> curso = cursoRepository.findById(id);
-        // var cursoTemTopico = topicoRepository.findByCursoId(id);
         if (curso.isPresent()) {
-            cursoRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+            if(validarExistenciaDeTopicoComCurso.validar(curso.get())){
+                cursoRepository.deleteById(id);
+                return ResponseEntity.noContent().build();
+            }
         }
         return ResponseEntity.notFound().build();
     }

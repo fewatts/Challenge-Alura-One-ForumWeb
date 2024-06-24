@@ -19,4 +19,6 @@ public interface TopicoRepository extends JpaRepository<Topico, Long>{
 
     boolean findByCursoId(Long id); 
 
+    long countByCursoId(Long id);
+
 }
