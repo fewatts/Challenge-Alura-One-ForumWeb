@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,7 +35,7 @@ public class Curso {
         this.categoria = dados.categoria();
     }
 
-    public void atualizar(@Valid DadosCadastroCurso dados) {
+    public void atualizar(DadosCadastroCurso dados) {
         if(dados.nome() != null){
             this.nome = dados.nome();
         }
