@@ -48,6 +48,10 @@ public class Topico {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_curso")
     private Curso curso;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
     @OneToMany(mappedBy = "topico", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -72,5 +76,4 @@ public class Topico {
         }
         this.dataCriacao = LocalDateTime.now();
     }
-
 }

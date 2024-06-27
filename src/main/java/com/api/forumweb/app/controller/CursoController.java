@@ -23,15 +23,16 @@ import com.api.forumweb.app.domain.dto.dtocurso.DadosCadastroCurso;
 import com.api.forumweb.app.domain.dto.dtocurso.DadosDetalhamentoCurso;
 import com.api.forumweb.app.domain.model.Curso;
 import com.api.forumweb.app.domain.repository.CursoRepository;
-// import com.api.forumweb.app.domain.repository.TopicoRepository;
 import com.api.forumweb.app.domain.validation.validadorcurso.ValidarCursoDuplicado;
 import com.api.forumweb.app.domain.validation.validadorcurso.ValidarExistenciaDeTopicoComCurso;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("cursos")
+@SecurityRequirement(name = "bearer-key")
 public class CursoController {
 
     @Autowired

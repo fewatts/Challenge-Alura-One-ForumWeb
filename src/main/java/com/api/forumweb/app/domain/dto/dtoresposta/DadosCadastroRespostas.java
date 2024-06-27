@@ -11,6 +11,8 @@ public record DadosCadastroRespostas(
 
         @NotNull Long idTopico,
 
+        @NotNull Long idUsuario,
+
         LocalDateTime dataCriacao,
 
         @NotBlank String solucao

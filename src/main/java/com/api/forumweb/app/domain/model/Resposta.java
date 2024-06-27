@@ -41,6 +41,10 @@ public class Resposta {
 
     private String solucao;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_curso")
+    private Usuario usuario;
+
     public Resposta(DadosCadastroRespostas dados){
         this.mensagem = dados.mensagem();
         this.dataCriacao = LocalDateTime.now();

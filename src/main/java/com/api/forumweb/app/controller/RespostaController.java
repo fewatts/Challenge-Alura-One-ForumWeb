@@ -24,20 +24,26 @@ import com.api.forumweb.app.domain.dto.dtoresposta.DadosDetalhamentoResposta;
 import com.api.forumweb.app.domain.dto.dtoresposta.DadosListagemRespostas;
 import com.api.forumweb.app.domain.model.Resposta;
 import com.api.forumweb.app.domain.repository.RespostaRepository;
+import com.api.forumweb.app.domain.repository.UsuarioRepository;
 import com.api.forumweb.app.domain.repository.TopicoRepository;
 import com.api.forumweb.app.domain.validation.validadorresposta.ValidarExistenciaTopico;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("respostas")
+@SecurityRequirement(name = "bearer-key")
 public class RespostaController {
     @Autowired
     private RespostaRepository respostaRepository;
 
     @Autowired
     private TopicoRepository topicoRepository;
+
+    @Autowired 
+    UsuarioRepository usuarioRepository;
 
     @Autowired
     private ValidarExistenciaTopico validarExistenciaTopico;
@@ -62,6 +68,7 @@ public class RespostaController {
         validarExistenciaTopico.validar(dados);
         var resposta = new Resposta(dados);
         resposta.setTopico(topicoRepository.getReferenceById(dados.idTopico()));
+        resposta.setUsuario(usuarioRepository.getReferenceById(dados.idUsuario()));
         respostaRepository.save(resposta);
 
         var uri = uriBuilder.path("/respostas/{id}").buildAndExpand(resposta.getId()).toUri();

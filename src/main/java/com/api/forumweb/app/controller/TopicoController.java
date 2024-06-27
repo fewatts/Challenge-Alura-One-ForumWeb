@@ -26,13 +26,16 @@ import com.api.forumweb.app.domain.dto.dtotopico.DadosListagemTopico;
 import com.api.forumweb.app.domain.model.Topico;
 import com.api.forumweb.app.domain.repository.CursoRepository;
 import com.api.forumweb.app.domain.repository.TopicoRepository;
+import com.api.forumweb.app.domain.repository.UsuarioRepository;
 import com.api.forumweb.app.domain.validation.validadorestopico.ValidadorPostagemTopico;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("topicos")
+@SecurityRequirement(name = "bearer-key")
 public class TopicoController {
 
     @Autowired
@@ -40,6 +43,9 @@ public class TopicoController {
 
     @Autowired
     private CursoRepository cursoRepository;
+
+    @Autowired 
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private List<ValidadorPostagemTopico> validadoresTopico;
@@ -62,8 +68,10 @@ public class TopicoController {
     public ResponseEntity<DadosDetalhamentoTopico> cadastrarTopico(@RequestBody @Valid DadosCadastroTopico dados,
             UriComponentsBuilder uriBuilder) {
         validadoresTopico.forEach(v -> v.validar(dados));
+        
         var topico = new Topico(dados);
         topico.setCurso(cursoRepository.getReferenceById(dados.idCurso()));
+        topico.setUsuario(usuarioRepository.getReferenceById(dados.idUsuario()));
         topicoRepository.save(topico);
 
         var uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
