@@ -43,7 +43,7 @@ public class RespostaController {
     private TopicoRepository topicoRepository;
 
     @Autowired 
-    UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private ValidarExistenciaTopico validarExistenciaTopico;
@@ -81,7 +81,6 @@ public class RespostaController {
     public ResponseEntity<DadosDetalhamentoResposta> atualizarResposta(@PathVariable Long id, @RequestBody @Valid DadosCadastroRespostas dados){
         Optional<Resposta> resposta = respostaRepository.findById(id);
         if(resposta.isPresent()){
-            System.out.println(resposta);
             resposta.get().atualizar(dados);
         }
         return ResponseEntity.ok().body(new DadosDetalhamentoResposta(resposta.get()));
