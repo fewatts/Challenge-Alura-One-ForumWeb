@@ -42,7 +42,7 @@ public class Resposta {
     private String solucao;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_curso")
+    @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
     public Resposta(DadosCadastroRespostas dados){
