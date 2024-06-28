@@ -27,6 +27,7 @@ import com.api.forumweb.app.domain.repository.RespostaRepository;
 import com.api.forumweb.app.domain.repository.UsuarioRepository;
 import com.api.forumweb.app.domain.repository.TopicoRepository;
 import com.api.forumweb.app.domain.validation.validadorresposta.ValidarExistenciaTopico;
+import com.api.forumweb.app.domain.validation.validadorresposta.ValidarUsuarioResposta;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -48,6 +49,9 @@ public class RespostaController {
     @Autowired
     private ValidarExistenciaTopico validarExistenciaTopico;
 
+    @Autowired
+    private ValidarUsuarioResposta validarExistenciaUsuario;
+
     @GetMapping
     public ResponseEntity<Page<DadosListagemRespostas>> listarRespostas(
             @PageableDefault(size = 10, sort = { "dataCriacao" }, direction = Sort.Direction.DESC) Pageable paginacao) {
@@ -66,6 +70,7 @@ public class RespostaController {
     public ResponseEntity<DadosDetalhamentoResposta> cadastrarResposta(@RequestBody @Valid DadosCadastroRespostas dados,
             UriComponentsBuilder uriBuilder) {
         validarExistenciaTopico.validar(dados);
+        validarExistenciaUsuario.validar(dados);
         var resposta = new Resposta(dados);
         resposta.setTopico(topicoRepository.getReferenceById(dados.idTopico()));
         resposta.setUsuario(usuarioRepository.getReferenceById(dados.idUsuario()));
