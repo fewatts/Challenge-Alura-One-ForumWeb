@@ -9,7 +9,7 @@ import com.api.forumweb.app.domain.repository.TopicoRepository;
 import com.api.forumweb.app.domain.validation.ValidacaoException;
 
 @Component
-public class ValidarExistenciaDeTopicoComCurso {
+public class ValidarExistenciaDeCursoComTopico {
 
     @Autowired
     private TopicoRepository topicoRepository;

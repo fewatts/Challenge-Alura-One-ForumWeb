@@ -24,7 +24,7 @@ import com.api.forumweb.app.domain.dto.dtocurso.DadosDetalhamentoCurso;
 import com.api.forumweb.app.domain.model.Curso;
 import com.api.forumweb.app.domain.repository.CursoRepository;
 import com.api.forumweb.app.domain.validation.validadorcurso.ValidarCursoDuplicado;
-import com.api.forumweb.app.domain.validation.validadorcurso.ValidarExistenciaDeTopicoComCurso;
+import com.api.forumweb.app.domain.validation.validadorcurso.ValidarExistenciaDeCursoComTopico;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import jakarta.transaction.Transactional;
@@ -39,7 +39,7 @@ public class CursoController {
     private CursoRepository cursoRepository;
 
     @Autowired
-    private ValidarExistenciaDeTopicoComCurso validarExistenciaDeTopicoComCurso;
+    private ValidarExistenciaDeCursoComTopico validarExistenciaDeCursoComTopico;
 
     @Autowired
     private ValidarCursoDuplicado validarCursoDuplicado;
@@ -86,7 +86,7 @@ public class CursoController {
     public ResponseEntity<HttpStatus> deletarCurso(@PathVariable Long id) {
         Optional<Curso> curso = cursoRepository.findById(id);
         if (curso.isPresent()) {
-            if(validarExistenciaDeTopicoComCurso.validar(curso.get())){
+            if(validarExistenciaDeCursoComTopico.validar(curso.get())){
                 cursoRepository.deleteById(id);
                 return ResponseEntity.noContent().build();
             }
