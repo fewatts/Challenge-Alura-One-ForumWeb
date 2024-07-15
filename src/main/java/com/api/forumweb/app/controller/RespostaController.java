@@ -24,10 +24,7 @@ import com.api.forumweb.app.domain.dto.dtoresposta.DadosDetalhamentoResposta;
 import com.api.forumweb.app.domain.dto.dtoresposta.DadosListagemRespostas;
 import com.api.forumweb.app.domain.model.Resposta;
 import com.api.forumweb.app.domain.repository.RespostaRepository;
-import com.api.forumweb.app.domain.repository.UsuarioRepository;
-import com.api.forumweb.app.domain.repository.TopicoRepository;
-import com.api.forumweb.app.domain.validation.validadorresposta.ValidarExistenciaTopico;
-import com.api.forumweb.app.domain.validation.validadorresposta.ValidarUsuarioResposta;
+import com.api.forumweb.app.domain.service.RespostaService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -37,20 +34,12 @@ import jakarta.validation.Valid;
 @RequestMapping("respostas")
 @SecurityRequirement(name = "bearer-key")
 public class RespostaController {
+
     @Autowired
     private RespostaRepository respostaRepository;
 
     @Autowired
-    private TopicoRepository topicoRepository;
-
-    @Autowired 
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private ValidarExistenciaTopico validarExistenciaTopico;
-
-    @Autowired
-    private ValidarUsuarioResposta validarExistenciaUsuario;
+    private RespostaService respostaService;
 
     @GetMapping
     public ResponseEntity<Page<DadosListagemRespostas>> listarRespostas(
@@ -60,7 +49,7 @@ public class RespostaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DadosDetalhamentoResposta> detalharResposta(@PathVariable Long id){
+    public ResponseEntity<DadosDetalhamentoResposta> detalharResposta(@PathVariable Long id) {
         var resposta = respostaRepository.getReferenceById(id);
         return ResponseEntity.ok().body(new DadosDetalhamentoResposta(resposta));
     }
@@ -69,23 +58,17 @@ public class RespostaController {
     @Transactional
     public ResponseEntity<DadosDetalhamentoResposta> cadastrarResposta(@RequestBody @Valid DadosCadastroRespostas dados,
             UriComponentsBuilder uriBuilder) {
-        validarExistenciaTopico.validar(dados);
-        validarExistenciaUsuario.validar(dados);
-        var resposta = new Resposta(dados);
-        resposta.setTopico(topicoRepository.getReferenceById(dados.idTopico()));
-        resposta.setUsuario(usuarioRepository.getReferenceById(dados.idUsuario()));
-        respostaRepository.save(resposta);
-
+        Resposta resposta = respostaService.cadastrarResposta(dados);
         var uri = uriBuilder.path("/respostas/{id}").buildAndExpand(resposta.getId()).toUri();
-
         return ResponseEntity.created(uri).body(new DadosDetalhamentoResposta(resposta));
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<DadosDetalhamentoResposta> atualizarResposta(@PathVariable Long id, @RequestBody @Valid DadosCadastroRespostas dados){
+    public ResponseEntity<DadosDetalhamentoResposta> atualizarResposta(@PathVariable Long id,
+            @RequestBody @Valid DadosCadastroRespostas dados) {
         Optional<Resposta> resposta = respostaRepository.findById(id);
-        if(resposta.isPresent()){
+        if (resposta.isPresent()) {
             resposta.get().atualizar(dados);
         }
         return ResponseEntity.ok().body(new DadosDetalhamentoResposta(resposta.get()));
@@ -93,9 +76,9 @@ public class RespostaController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<HttpStatus> deletarResposta(@PathVariable Long id){
+    public ResponseEntity<HttpStatus> deletarResposta(@PathVariable Long id) {
         Optional<Resposta> resposta = respostaRepository.findById(id);
-        if(resposta.isPresent()){
+        if (resposta.isPresent()) {
             respostaRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         }
