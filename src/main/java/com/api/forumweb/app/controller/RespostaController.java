@@ -30,6 +30,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+/**
+ * Controller responsável por gerenciar respostas.
+ */
 @RestController
 @RequestMapping("respostas")
 @SecurityRequirement(name = "bearer-key")
@@ -41,6 +44,12 @@ public class RespostaController {
     @Autowired
     private RespostaService respostaService;
 
+    /**
+     * Lista todas as respostas com paginação.
+     *
+     * @param paginacao Configurações de paginação e ordenação.
+     * @return ResponseEntity contendo uma página de listagem de respostas.
+     */
     @GetMapping
     public ResponseEntity<Page<DadosListagemRespostas>> listarRespostas(
             @PageableDefault(size = 10, sort = { "dataCriacao" }, direction = Sort.Direction.DESC) Pageable paginacao) {
@@ -48,12 +57,25 @@ public class RespostaController {
         return ResponseEntity.ok(page);
     }
 
+    /**
+     * Detalha uma resposta específica.
+     *
+     * @param id ID da resposta a ser detalhada.
+     * @return ResponseEntity contendo os detalhes da resposta.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<DadosDetalhamentoResposta> detalharResposta(@PathVariable Long id) {
         var resposta = respostaRepository.getReferenceById(id);
         return ResponseEntity.ok().body(new DadosDetalhamentoResposta(resposta));
     }
 
+    /**
+     * Cadastra uma nova resposta.
+     *
+     * @param dados      Dados da resposta a ser cadastrada.
+     * @param uriBuilder Builder para criar a URI de resposta.
+     * @return ResponseEntity contendo os detalhes da resposta cadastrada.
+     */
     @PostMapping
     @Transactional
     public ResponseEntity<DadosDetalhamentoResposta> cadastrarResposta(@RequestBody @Valid DadosCadastroRespostas dados,
@@ -63,6 +85,13 @@ public class RespostaController {
         return ResponseEntity.created(uri).body(new DadosDetalhamentoResposta(resposta));
     }
 
+    /**
+     * Atualiza uma resposta existente.
+     *
+     * @param id    ID da resposta a ser atualizada.
+     * @param dados Novos dados da resposta.
+     * @return ResponseEntity contendo os detalhes da resposta atualizada.
+     */
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<DadosDetalhamentoResposta> atualizarResposta(@PathVariable Long id,
@@ -74,6 +103,12 @@ public class RespostaController {
         return ResponseEntity.ok().body(new DadosDetalhamentoResposta(resposta.get()));
     }
 
+    /**
+     * Deleta uma resposta.
+     *
+     * @param id ID da resposta a ser deletada.
+     * @return ResponseEntity com o status da operação.
+     */
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<HttpStatus> deletarResposta(@PathVariable Long id) {

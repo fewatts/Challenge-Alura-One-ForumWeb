@@ -18,14 +18,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entidade Resposta que representa uma resposta a um tópico no sistema.
+ */
+@Entity
 @Table(name = "respostas")
-@Entity(name = "Resposta")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Resposta {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,19 +48,28 @@ public class Resposta {
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
-    public Resposta(DadosCadastroRespostas dados){
+    /**
+     * Construtor para criar uma Resposta a partir dos dados de cadastro.
+     *
+     * @param dados Os dados de cadastro da resposta.
+     */
+    public Resposta(DadosCadastroRespostas dados) {
         this.mensagem = dados.mensagem();
         this.dataCriacao = LocalDateTime.now();
         this.solucao = dados.solucao();
     }
 
+    /**
+     * Atualiza os atributos da resposta com base nos novos dados fornecidos.
+     *
+     * @param dados Os novos dados de cadastro da resposta.
+     */
     public void atualizar(DadosCadastroRespostas dados) {
-        if(dados.mensagem() != null){
+        if (dados.mensagem() != null) {
             this.mensagem = dados.mensagem();
         }
-        if(dados.solucao() != null){
+        if (dados.solucao() != null) {
             this.solucao = dados.solucao();
         }
     }
-    
 }

@@ -11,6 +11,9 @@ import com.api.forumweb.app.domain.repository.UsuarioRepository;
 import com.api.forumweb.app.domain.validation.validadorresposta.ValidarExistenciaTopico;
 import com.api.forumweb.app.domain.validation.validadorresposta.ValidarUsuarioResposta;
 
+/**
+ * Serviço responsável por operações relacionadas a respostas em tópicos.
+ */
 @Service
 public class RespostaService {
 
@@ -29,6 +32,12 @@ public class RespostaService {
     @Autowired
     private ValidarUsuarioResposta validarExistenciaUsuario;
 
+    /**
+     * Cadastra uma nova resposta para um tópico.
+     *
+     * @param dados Dados da resposta a ser cadastrada.
+     * @return A resposta cadastrada.
+     */
     public Resposta cadastrarResposta(DadosCadastroRespostas dados) {
         validarExistencia(dados);
         Resposta resposta = criarResposta(dados);
@@ -36,16 +45,26 @@ public class RespostaService {
         return resposta;
     }
 
+    /**
+     * Valida a existência do tópico e do usuário associado à resposta.
+     *
+     * @param dados Dados da resposta a ser validada.
+     */
     private void validarExistencia(DadosCadastroRespostas dados) {
         validarExistenciaTopico.validar(dados);
         validarExistenciaUsuario.validar(dados);
     }
 
+    /**
+     * Cria uma instância de Resposta com base nos dados fornecidos.
+     *
+     * @param dados Dados da resposta a ser criada.
+     * @return A resposta criada.
+     */
     private Resposta criarResposta(DadosCadastroRespostas dados) {
         Resposta resposta = new Resposta(dados);
         resposta.setTopico(topicoRepository.getReferenceById(dados.idTopico()));
         resposta.setUsuario(usuarioRepository.getReferenceById(dados.idUsuario()));
         return resposta;
     }
-
 }

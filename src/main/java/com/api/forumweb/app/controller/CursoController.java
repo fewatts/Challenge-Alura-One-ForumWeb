@@ -30,6 +30,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+/**
+ * Controller responsável por gerenciar cursos.
+ */
 @RestController
 @RequestMapping("cursos")
 @SecurityRequirement(name = "bearer-key")
@@ -44,6 +47,12 @@ public class CursoController {
     @Autowired
     private ValidarCursoDuplicado validarCursoDuplicado;
 
+    /**
+     * Lista todos os cursos com paginação.
+     *
+     * @param paginacao Configurações de paginação e ordenação.
+     * @return ResponseEntity contendo uma página de detalhes dos cursos.
+     */
     @GetMapping
     public ResponseEntity<Page<DadosDetalhamentoCurso>> listarCursos(
             @PageableDefault(size = 10, sort = { "nome" }, direction = Sort.Direction.ASC) Pageable paginacao) {
@@ -51,12 +60,25 @@ public class CursoController {
         return ResponseEntity.ok(page);
     }
 
+    /**
+     * Detalha um curso específico.
+     *
+     * @param id ID do curso a ser detalhado.
+     * @return ResponseEntity contendo os detalhes do curso.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<DadosDetalhamentoCurso> detalharCurso(@PathVariable Long id) {
         var curso = cursoRepository.getReferenceById(id);
         return ResponseEntity.ok().body(new DadosDetalhamentoCurso(curso));
     }
 
+    /**
+     * Cadastra um novo curso.
+     *
+     * @param dados      Dados do curso a ser cadastrado.
+     * @param uriBuilder Builder para criar a URI de resposta.
+     * @return ResponseEntity contendo os detalhes do curso cadastrado.
+     */
     @PostMapping
     @Transactional
     public ResponseEntity<DadosDetalhamentoCurso> cadastrarCurso(@RequestBody @Valid DadosCadastroCurso dados,
@@ -64,12 +86,17 @@ public class CursoController {
         validarCursoDuplicado.validar(dados);
         var curso = new Curso(dados);
         cursoRepository.save(curso);
-
         var uri = uriBuilder.path("/cursos/{id}").buildAndExpand(curso.getId()).toUri();
-
         return ResponseEntity.created(uri).body(new DadosDetalhamentoCurso(curso));
     }
 
+    /**
+     * Atualiza um curso existente.
+     *
+     * @param id    ID do curso a ser atualizado.
+     * @param dados Novos dados do curso.
+     * @return ResponseEntity contendo os detalhes do curso atualizado.
+     */
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<DadosDetalhamentoCurso> atualizarCurso(@PathVariable Long id,
@@ -81,17 +108,22 @@ public class CursoController {
         return ResponseEntity.ok().body(new DadosDetalhamentoCurso(curso.get()));
     }
 
+    /**
+     * Deleta um curso.
+     *
+     * @param id ID do curso a ser deletado.
+     * @return ResponseEntity com o status da operação.
+     */
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<HttpStatus> deletarCurso(@PathVariable Long id) {
         Optional<Curso> curso = cursoRepository.findById(id);
         if (curso.isPresent()) {
-            if(validarExistenciaDeCursoComTopico.validar(curso.get())){
+            if (validarExistenciaDeCursoComTopico.validar(curso.get())) {
                 cursoRepository.deleteById(id);
                 return ResponseEntity.noContent().build();
             }
         }
         return ResponseEntity.notFound().build();
     }
-
 }

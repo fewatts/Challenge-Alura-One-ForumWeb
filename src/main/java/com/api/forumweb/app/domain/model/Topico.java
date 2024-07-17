@@ -23,8 +23,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entidade Topico que representa um tópico de discussão no sistema.
+ */
+@Entity
 @Table(name = "topicos")
-@Entity(name = "Topico")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -48,7 +51,7 @@ public class Topico {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_curso")
     private Curso curso;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
@@ -57,6 +60,11 @@ public class Topico {
     @JsonManagedReference
     private List<Resposta> respostas;
 
+    /**
+     * Construtor para criar um Tópico a partir dos dados de cadastro.
+     *
+     * @param dados Os dados de cadastro do tópico.
+     */
     public Topico(DadosCadastroTopico dados) {
         this.titulo = dados.titulo();
         this.mensagem = dados.mensagem();
@@ -64,14 +72,19 @@ public class Topico {
         this.status = dados.status();
     }
 
+    /**
+     * Atualiza os atributos do tópico com base nos novos dados fornecidos.
+     *
+     * @param dados Os novos dados de cadastro do tópico.
+     */
     public void atualizar(DadosCadastroTopico dados) {
-        if(dados.titulo() != null){
+        if (dados.titulo() != null) {
             this.titulo = dados.titulo();
         }
-        if(dados.mensagem() != null){
+        if (dados.mensagem() != null) {
             this.mensagem = dados.mensagem();
         }
-        if(dados.status() != null){
+        if (dados.status() != null) {
             this.status = dados.status();
         }
         this.dataCriacao = LocalDateTime.now();

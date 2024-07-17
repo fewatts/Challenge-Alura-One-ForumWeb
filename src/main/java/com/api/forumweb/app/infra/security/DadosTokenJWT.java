@@ -1,5 +1,6 @@
 package com.api.forumweb.app.infra.security;
 
-public record DadosTokenJWT(String token) {
-
-}
+/**
+ * Classe de dados para encapsular o token JWT.
+ */
+public record DadosTokenJWT(String token) {}

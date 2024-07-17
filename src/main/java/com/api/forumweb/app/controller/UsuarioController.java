@@ -38,6 +38,12 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    /**
+     * Lista todos os usuários com paginação.
+     *
+     * @param paginacao Configuração de paginação.
+     * @return Página de usuários listados.
+     */
     @GetMapping
     public ResponseEntity<Page<DadosDetalhamentoUsuario>> listarUsuarios(
             @PageableDefault(size = 10, sort = { "nome" }, direction = Sort.Direction.ASC) Pageable paginacao) {
@@ -45,24 +51,41 @@ public class UsuarioController {
         return ResponseEntity.ok(page);
     }
 
+    /**
+     * Detalha um usuário específico pelo ID.
+     *
+     * @param id ID do usuário a ser detalhado.
+     * @return Detalhes do usuário.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<DadosDetalhamentoUsuario> detalharUsuario(@PathVariable Long id) {
         var usuario = usuarioRepository.getReferenceById(id);
         return ResponseEntity.ok().body(new DadosDetalhamentoUsuario(usuario));
     }
 
+    /**
+     * Cadastra um novo usuário.
+     *
+     * @param dados Dados do usuário a ser cadastrado.
+     * @param uriBuilder Builder para criar a URI de resposta.
+     * @return ResponseEntity contendo os detalhes do usuário cadastrado.
+     */
     @PostMapping
     @Transactional
     public ResponseEntity<DadosDetalhamentoUsuario> cadastrarUsuario(@RequestBody @Valid DadosCadastroUsuario dados,
             UriComponentsBuilder uriBuilder) {
-
         var usuario = usuarioService.cadastrarUsuario(dados);
-
         var uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuario.get().getId()).toUri();
-
         return ResponseEntity.created(uri).body(new DadosDetalhamentoUsuario(usuario.get()));
     }
 
+    /**
+     * Atualiza um usuário existente pelo ID.
+     *
+     * @param id ID do usuário a ser atualizado.
+     * @param dados Novos dados do usuário.
+     * @return ResponseEntity contendo os detalhes do usuário atualizado.
+     */
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<DadosDetalhamentoUsuario> atualizarUsuario(@PathVariable Long id,

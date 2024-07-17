@@ -26,62 +26,74 @@ import com.api.forumweb.app.domain.dto.dtousuario.DadosAutenticacao;
 import com.api.forumweb.app.domain.model.Usuario;
 import com.api.forumweb.app.infra.security.TokenService;
 
+/**
+ * Testes para o controlador de autenticação {@link AutenticacaoController}.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
 public class AutenticacaoControllerTest {
 
-    @Autowired
-    private MockMvc mvc;
+        @Autowired
+        private MockMvc mvc;
 
-    @Autowired
-    private JacksonTester<DadosAutenticacao> DadosAutenticacaoJt;
+        @Autowired
+        private JacksonTester<DadosAutenticacao> DadosAutenticacaoJt;
 
-    @MockBean
-    private TokenService tokenService;
+        @MockBean
+        private TokenService tokenService;
 
-    @MockBean
-    private AuthenticationManager manager;
+        @MockBean
+        private AuthenticationManager manager;
 
-    @Test
-    @DisplayName("Teste de autenticação com sucesso")
-    void autenticacaoCenarioUm() throws Exception {
-    
-        var dadosAutenticacao = new DadosAutenticacao("fulano@gmail.com", "Hdkset43%4F");
+        /**
+         * Teste de autenticação com sucesso.
+         *
+         * @throws Exception Se ocorrer algum erro durante o teste.
+         */
+        @Test
+        @DisplayName("Teste de autenticação com sucesso")
+        void autenticacaoCenarioUm() throws Exception {
 
-        var authenticationMock = mock(Authentication.class);
-        when(manager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(authenticationMock);
+                var dadosAutenticacao = new DadosAutenticacao("fulano@gmail.com", "Hdkset43%4F");
 
-        var usuarioMock = new Usuario(/* dados mockados do usuário */);
-        when(authenticationMock.getPrincipal()).thenReturn(usuarioMock);
+                var authenticationMock = mock(Authentication.class);
+                when(manager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                                .thenReturn(authenticationMock);
 
-        var tokenJWTMock = "mocked-jwt-token";
-        when(tokenService.gerarToken(usuarioMock)).thenReturn(tokenJWTMock);
+                var usuarioMock = new Usuario(/* dados mockados do usuário */);
+                when(authenticationMock.getPrincipal()).thenReturn(usuarioMock);
 
-        var result = mvc.perform(
-                post("/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(DadosAutenticacaoJt.write(dadosAutenticacao).getJson()))
-                .andExpect(status().isOk())
-                .andReturn();
+                var tokenJWTMock = "mocked-jwt-token";
+                when(tokenService.gerarToken(usuarioMock)).thenReturn(tokenJWTMock);
 
-        var content = result.getResponse().getContentAsString();
-        assertThat(content).contains(tokenJWTMock);
-    }
+                var result = mvc.perform(
+                                post("/login")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(DadosAutenticacaoJt.write(dadosAutenticacao).getJson()))
+                                .andExpect(status().isOk())
+                                .andReturn();
 
-    @Test
-    @DisplayName("Teste de autenticação com falha")
-    void autenticacaoCenarioDois() throws Exception {
-        var dadosAutenticacao = new DadosAutenticacao("fulano@gmail.com", "SenhaIncorreta");
+                var content = result.getResponse().getContentAsString();
+                assertThat(content).contains(tokenJWTMock);
+        }
 
-        when(manager.authenticate(any()))
-                .thenThrow(new BadCredentialsException("Credenciais inválidas"));
+        /**
+         * Teste de autenticação com falha.
+         *
+         * @throws Exception Se ocorrer algum erro durante o teste.
+         */
+        @Test
+        @DisplayName("Teste de autenticação com falha")
+        void autenticacaoCenarioDois() throws Exception {
+                var dadosAutenticacao = new DadosAutenticacao("fulano@gmail.com", "SenhaIncorreta");
 
-        mvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(DadosAutenticacaoJt.write(dadosAutenticacao).getJson()))
-                .andExpect(status().isUnauthorized());
-    }
-    
+                when(manager.authenticate(any()))
+                                .thenThrow(new BadCredentialsException("Credenciais inválidas"));
+
+                mvc.perform(post("/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(DadosAutenticacaoJt.write(dadosAutenticacao).getJson()))
+                                .andExpect(status().isUnauthorized());
+        }
 }

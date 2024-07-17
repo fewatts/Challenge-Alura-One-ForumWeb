@@ -30,6 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
+/**
+ * Testes para o controlador de respostas {@link RespostaController}.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
@@ -53,6 +56,12 @@ class RespostaControllerTest {
         @MockBean
         private RespostaRepository rp;
 
+        /**
+         * Testa o POST de respostas sem corpo na requisição, esperando um retorno de
+         * BAD_REQUEST.
+         *
+         * @throws Exception Se ocorrer algum erro durante o teste.
+         */
         @Test
         @DisplayName("POST de respostas sem corpo na requisição deveria retornar BAD_REQUEST")
         @WithMockUser
@@ -63,6 +72,12 @@ class RespostaControllerTest {
                 assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
         }
 
+        /**
+         * Testa o POST de respostas válidas, esperando um retorno de OK e os dados da
+         * resposta cadastrada.
+         *
+         * @throws Exception Se ocorrer algum erro durante o teste.
+         */
         @Test
         @DisplayName("POST de respostas válidas deve retornar OK")
         @WithMockUser
@@ -94,5 +109,4 @@ class RespostaControllerTest {
                 assertThat(jsonResponseNode).isEqualTo(jsonEsperadoNode);
                 assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
         }
-
 }

@@ -13,15 +13,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entidade Curso que representa um curso no sistema.
+ */
+@Entity
 @Table(name = "cursos")
-@Entity(name = "Curso")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Curso {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,18 +33,27 @@ public class Curso {
 
     private String categoria;
 
-    public Curso(DadosCadastroCurso dados){
+    /**
+     * Construtor para criar um Curso a partir dos dados de cadastro.
+     *
+     * @param dados Os dados de cadastro do curso.
+     */
+    public Curso(DadosCadastroCurso dados) {
         this.nome = dados.nome();
         this.categoria = dados.categoria();
     }
 
+    /**
+     * Atualiza os atributos do curso com base nos novos dados fornecidos.
+     *
+     * @param dados Os novos dados de cadastro do curso.
+     */
     public void atualizar(DadosCadastroCurso dados) {
-        if(dados.nome() != null){
+        if (dados.nome() != null) {
             this.nome = dados.nome();
         }
-        if(dados.categoria() != null){
+        if (dados.categoria() != null) {
             this.categoria = dados.categoria();
         }
     }
-
 }
